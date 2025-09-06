@@ -4,6 +4,8 @@ const cors = require('cors'); // middleware that enables cross-origin resource s
 const cookieParser = require('cookie-parser'); // middleware that parses the cookie header and populate req.cookies with an object keyed by the cookie names.
 const mongoose = require('mongoose');
 
+const authRouter = require('./routers/authRouter');
+
 const app = express();
 app.use(cors());
 app.use(helmet());
@@ -12,13 +14,15 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
 mongoose
-	.connect(process.env.MONGO_URI)
+	.connect(`${process.env.MONGODB_URI}`)
 	.then(() => {
 		console.log('Database connected');
 	})
 	.catch((err) => {
-		console.log(err);
+		console.log('Database connection error', err);
 	});
+
+app.use('/api/auth', authRouter);
 
 app.get('/', (req, res) => {
     res.json({ message: 'Hello from the server' });

@@ -1,0 +1,45 @@
+services:
+  db:
+    container_name: mongo_db
+    image: mongo:8.0
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGODB_DATABASE}
+    ports:
+      - "27017:27017"
+    networks:
+      - mern-app-network
+    volumes:
+      - db:/data/db
+    command: mongod
+  app:
+    container_name: express_app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - PORT=${PORT}
+      - MONGODB_URI=${MONGODB_URI}
+      - MONGODB_DATABASE=${MONGODB_DATABASE}
+    depends_on:
+      - db
+    links:
+      - db
+    command: npm start
+    networks:
+      - mern-app-network
+
+
+networks: # allow services to talk to each other while providing isolation from other docker container, running on the same host
+  mern-app-network:
+    driver: bridge
+
+volumes:
+  db: # to persist data even if the container is stopped or removed
