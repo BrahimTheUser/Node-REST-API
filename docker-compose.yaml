@@ -28,6 +28,9 @@ services:
       - PORT=${PORT}
       - MONGODB_URI=${MONGODB_URI}
       - MONGODB_DATABASE=${MONGODB_DATABASE}
+      - TOKEN_SECRET=${TOKEN_SECRET}
+      - NODE_ENV=${NODE_ENV}
+    restart: always
     depends_on:
       - db
     links:
@@ -35,7 +38,6 @@ services:
     command: npm start
     networks:
       - mern-app-network
-
 
 networks: # allow services to talk to each other while providing isolation from other docker container, running on the same host
   mern-app-network:
