@@ -58,7 +58,7 @@ exports.signin = async (req, res) => {
         .status(401)
         .json({ success: false, message: "Invalid credentials!" });
     }
-    
+
     const token = jwt.sign(
       {
         userId: existingUser._id,
@@ -85,4 +85,11 @@ exports.signin = async (req, res) => {
   } catch (error) {
     console.log(error);
   }
+};
+
+exports.signout = async (req, res) => {
+  res
+    .clearCookie("Authorization")
+    .status(200)
+    .json({ success: true, message: "logged out successfully" });
 };
